@@ -1,15 +1,16 @@
 let express = require('express');
 let cors = require("cors");
 let bodyParser = require("body-parser");
-let MongoClient = require("mongodb").MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 let ObjectId = require("mongodb").ObjectId;
 require('dotenv').config();
 
 let app = express();
 
-let uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.vpsgc.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qcsna.mongodb.net/<dbname>?retryWrites=true&w=majority`;
 
-let client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,6 +24,8 @@ app.get('/', (req, res) => {
 client.connect(err => {
     let eventsCollection = client.db(process.env.DB_NAME).collection(process.env.DB_COLL_1);
     let volunteersCollection = client.db(process.env.DB_NAME).collection(process.env.DB_COLL_2);
+
+    console.log("New Database Connected");
 
     app.post('/addEvent', (req, res) => {
         let event = req.body;
