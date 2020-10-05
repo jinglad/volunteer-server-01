@@ -18,34 +18,60 @@ app.get('/', (req, res) => {
     res.send('welcome back')
 })
 
+app.post('/addEvent', (req, res) => {
+    let event = req.body;
+    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    client.connect(err => {
+        let eventsCollection = client.db(process.env.DB_NAME).collection(process.env.DB_COLL_1);
+        eventsCollection.insertMany(event)
+            .then(result => {
+                console.log(result.insertedCount);
+                res.send(result.insertedCount);
+            });
+        client.close();
+    });
+});
+
+app.get('/events', (req, res) => {
+    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    let eventsCollection = client.db(process.env.DB_NAME).collection(process.env.DB_COLL_1);
+    client.connect(err => {
+        eventsCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            });
+        client.close();
+    });
+});
+
 
 client.connect(err => {
     let eventsCollection = client.db(process.env.DB_NAME).collection(process.env.DB_COLL_1);
     let volunteersCollection = client.db(process.env.DB_NAME).collection(process.env.DB_COLL_2);
 
-    app.post('/addEvent', (req, res) => {
-        let event = req.body;
-        eventsCollection.insertMany(event)
+    // app.post('/addEvent', (req, res) => {
+    //     let event = req.body;
+    //     eventsCollection.insertMany(event)
+    //         .then(result => {
+    //             console.log(result.insertedCount);
+    //             res.send(result.insertedCount);
+    //         })
+    // }),
+
+    // app.get('/events', (req, res) => {
+    //     eventsCollection.find({})
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //         })
+    // }),
+
+    app.post('/addVolunteer', (req, res) => {
+        let volunteer = req.body;
+        volunteersCollection.insertOne(volunteer)
             .then(result => {
-                console.log(result.insertedCount);
-                res.send(result.insertedCount);
+                res.send(result.insertedCount > 0);
             })
     }),
-
-        app.get('/events', (req, res) => {
-            eventsCollection.find({})
-                .toArray((err, documents) => {
-                    res.send(documents);
-                })
-        }),
-
-        app.post('/addVolunteer', (req, res) => {
-            let volunteer = req.body;
-            volunteersCollection.insertOne(volunteer)
-                .then(result => {
-                    res.send(result.insertedCount > 0);
-                })
-        }),
 
         app.get('/registeredEvents', (req, res) => {
             volunteersCollection.find({ email: req.query.email })
