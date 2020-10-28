@@ -12,4 +12,4 @@ This server side code was implemented with Node.js. Server side is connected wit
 * Dotenv
 
 [Resume](https://drive.google.com/file/d/1UZuM4RjUmLMNS9eqyeSiSOC02tR1nicv/view?usp=sharing)
-[Client-Side_code](https://github.com/jinglad/volunteer-network-client)
+[Client-Side-code](https://github.com/jinglad/volunteer-network-client)
